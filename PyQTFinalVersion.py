@@ -5,18 +5,14 @@ import numpy as np
 import math
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QLabel, QFormLayout, QLineEdit, QPushButton, QApplication, QMessageBox)
 
-with open('result.txt', 'w', encoding='utf-8') as file:
-    file.write("1.83,3.67,2\n")
-    file.write("QZ1,5812,2812\n")
-    file.write("QZ1\n")
-    file.write("QZ2,A,85.25420\n")
 
-def calculate_observations(exclude_point, A, B, C):
+
+def calculate_observations(exclude_point, A, B, C,Dong,Bei,angle):
     # 创建数据框架
     data = {
         "点名": ["QZ1", "QZ2", "NK1", "NK2", "NK3", "SK1", "SK2", "SK3", "SK4"],
-        "东坐标Y": [5812.000, 6068.195, 5564.067, 6153.703, 6503.179, 5543.226, 6493.799, 6228.198, 5361.498],
-        "北坐标X": [2812.000, 3996.613, 4240.531, 4520.848, 4204.314, 2588.072, 2676.516, 2443.770, 2350.672]
+        "东坐标Y": [Dong , 6068.195, 5564.067, 6153.703, 6503.179, 5543.226, 6493.799, 6228.198, 5361.498],
+        "北坐标X": [Bei, 3996.613, 4240.531, 4520.848, 4204.314, 2588.072, 2676.516, 2443.770, 2350.672]
     }
 
     # 提供的参数
@@ -114,13 +110,13 @@ class App(QWidget):
         self.form_layout = QFormLayout()
 
         self.precision1_input = QLineEdit(self)
-        self.form_layout.addRow('先验精度1:', self.precision1_input)
+        self.form_layout.addRow('东坐标:', self.precision1_input)
 
         self.precision2_input = QLineEdit(self)
-        self.form_layout.addRow('先验精度2:', self.precision2_input)
+        self.form_layout.addRow('北坐标:', self.precision2_input)
 
         self.precision3_input = QLineEdit(self)
-        self.form_layout.addRow('先验精度3:', self.precision3_input)
+        self.form_layout.addRow('已知角度:', self.precision3_input)
 
         layout.addLayout(self.form_layout)
 
@@ -134,11 +130,19 @@ class App(QWidget):
 
     def on_click(self):
         try:
-            A1 = float(self.precision1_input.text())
-            B1 = float(self.precision2_input.text())
-            C1 = float(self.precision3_input.text())
+            Dong = float(self.precision1_input.text())
+            Bei = float(self.precision2_input.text())
+            angle = float(self.precision3_input.text())
+
+            with open('result.txt', 'w', encoding='utf-8') as file:
+                file.write("1.83,3.67,2\n")
+                file.write("QZ1,5812,2812\n")
+                file.write("QZ1\n")
+                file.write(f"QZ2,A,{angle}\n")  # 85.25420
+            print("文件已写入")
+
             for i in ["QZ1", "QZ2", "NK1", "NK2", "NK3", "SK1", "SK2", "SK3", "SK4"]:
-                calculate_observations(i, A1, B1, C1)
+                calculate_observations(i, 1.83,3.67,2,Dong,Bei,angle)
             if os.path.exists("result.in2"):
                 os.remove("result.in2")
                 os.rename("result.txt", "result.in2")
